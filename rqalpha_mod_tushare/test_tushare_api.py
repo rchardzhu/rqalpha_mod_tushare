@@ -38,6 +38,7 @@ config = {
         "tushare": {
             "enabled": True,
             "lib": "rqalpha_mod_tushare",
+            "data_source": "tspro",
             "priority": 100
         },
         "sys_analyser": {

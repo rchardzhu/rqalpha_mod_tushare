@@ -6,9 +6,9 @@ from rqalpha.data.base_data_source import BaseDataSource, data_source
 
 
 class TushareKDataSource(BaseDataSource):
-    _data_source = "ts"
+    data_source = "ts"
     def __init__(self, path, custom_future_info):
-        TushareKDataSource._data_source = "tspro"
+        #TushareKDataSource.data_source = "tspro"
         super(TushareKDataSource, self).__init__(path, custom_future_info)
 
     @staticmethod
@@ -25,12 +25,10 @@ class TushareKDataSource(BaseDataSource):
         else:
             return result
 
-        if TushareKDataSource._data_source == "ts":
+        if TushareKDataSource.data_source == "ts":
             result = ts.get_k_data(code, index=index, start=start_dt.strftime('%Y-%m-%d'), end=end_dt.strftime('%Y-%m-%d'))
-        elif TushareKDataSource._data_source == "tspro":
+        elif TushareKDataSource.data_source == "tspro":
             result = ts.pro_bar(ts_code=order_book_id, start_date=start_dt.strftime('%Y%m%d'), end_date=end_dt.strftime('%Y%m%d'))
-        else:
-            print("not support")
 
         return result
 
