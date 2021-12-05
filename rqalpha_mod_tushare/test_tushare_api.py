@@ -23,7 +23,7 @@ def handle_bar(context, bar_dict):
 config = {
     "base": {
         "start_date": "2021-01-01",
-        "end_date": "2021-10-01",
+        "end_date": "2021-02-01",
         "benchmark": "000300.XSHG",
         "frequency": "1d",
         "matching_type": "current_bar",

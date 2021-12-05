@@ -2,11 +2,13 @@ import six
 import tushare as ts
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from rqalpha.data.base_data_source import BaseDataSource
+from rqalpha.data.base_data_source import BaseDataSource, data_source
 
 
 class TushareKDataSource(BaseDataSource):
+    _data_source = "ts"
     def __init__(self, path, custom_future_info):
+        TushareKDataSource._data_source = "tspro"
         super(TushareKDataSource, self).__init__(path, custom_future_info)
 
     @staticmethod
@@ -14,14 +16,23 @@ class TushareKDataSource(BaseDataSource):
         order_book_id = instrument.order_book_id
         code = order_book_id.split(".")[0]
 
+        result = None
+
         if instrument.type == 'CS':
             index = False
         elif instrument.type == 'INDX':
             index = True
         else:
-            return None
+            return result
 
-        return ts.get_k_data(code, index=index, start=start_dt.strftime('%Y-%m-%d'), end=end_dt.strftime('%Y-%m-%d'))
+        if TushareKDataSource._data_source == "ts":
+            result = ts.get_k_data(code, index=index, start=start_dt.strftime('%Y-%m-%d'), end=end_dt.strftime('%Y-%m-%d'))
+        elif TushareKDataSource._data_source == "tspro":
+            result = ts.pro_bar(ts_code=order_book_id, start_date=start_dt.strftime('%Y%m%d'), end_date=end_dt.strftime('%Y%m%d'))
+        else:
+            print("not support")
+
+        return result
 
     def get_bar(self, instrument, dt, frequency):
         if frequency != '1d':
@@ -50,7 +61,7 @@ class TushareKDataSource(BaseDataSource):
                 fields = [fields]
             fields = [field for field in fields if field in bar_data.columns]
 
-            return bar_data[fields].iloc[0].values
+            return bar_data[fields].values
 
     def available_data_range(self, frequency):
         return date(2005, 1, 1), date.today() - relativedelta(days=1)
